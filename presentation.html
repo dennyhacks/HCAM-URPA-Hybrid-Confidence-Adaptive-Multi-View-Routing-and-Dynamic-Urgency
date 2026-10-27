@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIH1711: HCAM-URPA Presentation Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-card: #131b2e;
+      --bg-card-hover: #1a253e;
+      --accent-blue: #38bdf8;
+      --accent-indigo: #6366f1;
+      --accent-purple: #a855f7;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --glow-blue: rgba(56, 189, 248, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      user-select: none;
+    }
+
+    /* Top Progress Bar & Header */
+    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 48px;
+      background: rgba(19, 27, 46, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 100;
+    }
+
+    .progress-bar-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-indigo), var(--accent-purple));
+      width: 14.28%;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .deck-badge {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-blue);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .deck-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .slide-counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Main Slides Viewport */
+    .slides-container {
+      width: 100%;
+      height: calc(100vh - 48px - 60px);
+      margin-top: 48px;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 40px 64px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(30px);
+      transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+    }
+
+    /* Slide Header */
+    .slide-header {
+      margin-bottom: 24px;
+    }
+
+    .slide-tag {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-blue);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slide-title {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .slide-subtitle {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* Slide Layouts & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      flex: 1;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      flex: 1;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s, background 0.2s, transform 0.2s;
+    }
+
+    .card:hover {
+      border-color: rgba(56, 189, 248, 0.3);
+      background: var(--bg-card-hover);
+      transform: translateY(-2px);
+    }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-body {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .card-body p {
+      margin-bottom: 10px;
+    }
+
+    .card-body ul {
+      padding-left: 20px;
+    }
+
+    .card-body li {
+      margin-bottom: 8px;
+    }
+
+    .badge-pill {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .pill-blue { background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); }
+    .pill-green { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+    .pill-purple { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); }
+    .pill-rose { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); }
+    .pill-amber { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+
+    /* Key Metric Highlight */
+    .metric-box {
+      background: rgba(10, 14, 23, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 12px;
+    }
+
+    .metric-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--accent-blue);
+      line-height: 1;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Math formula block */
+    .formula-block {
+      background: rgba(10, 14, 23, 0.75);
+      border-left: 3px solid var(--accent-indigo);
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      margin: 12px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #e2e8f0;
+      line-height: 1.5;
+    }
+
+    /* Tables */
+    .styled-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .styled-table th {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-color);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+    }
+
+    .styled-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: #cbd5e1;
+    }
+
+    .styled-table tr.highlight-row {
+      background: rgba(56, 189, 248, 0.08);
+      font-weight: 600;
+    }
+
+    .styled-table tr.highlight-row td {
+      color: #ffffff;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    /* Slide 1 Special Styles */
+    .hero-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      height: 100%;
+      gap: 28px;
+    }
+
+    .hero-title {
+      font-size: 46px;
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      max-width: 900px;
+      background: linear-gradient(135deg, #ffffff 40%, #93c5fd 80%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 19px;
+      color: var(--accent-blue);
+      max-width: 760px;
+      font-weight: 500;
+    }
+
+    .students-badge-card {
+      display: flex;
+      gap: 32px;
+      background: rgba(19, 27, 46, 0.7);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 16px;
+      padding: 20px 36px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 40px var(--glow-blue);
+    }
+
+    .student-entry {
+      text-align: left;
+    }
+
+    .student-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .student-reg {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--accent-blue);
+      margin-top: 3px;
+    }
+
+    .student-dept {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .hero-meta-row {
+      display: flex;
+      gap: 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .meta-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Bottom Control Bar */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      background: rgba(19, 27, 46, 0.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      z-index: 100;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-blue);
+      color: #ffffff;
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .slide-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .dot.active {
+      width: 28px;
+      border-radius: 999px;
+      background: var(--accent-blue);
+      box-shadow: 0 0 12px var(--accent-blue);
+    }
+
+    .speaker-notes-toggle {
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .speaker-notes-toggle:hover {
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .speaker-notes-panel {
+      position: fixed;
+      bottom: 60px;
+      right: 24px;
+      width: 440px;
+      max-height: 280px;
+      background: #0f172a;
+      border: 1px solid var(--accent-blue);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+      z-index: 99;
+      display: none;
+      overflow-y: auto;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+
+    .speaker-notes-panel.visible {
+      display: block;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .notes-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-blue);
+      margin-bottom: 8px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Progress Bar -->
+  <div class="top-bar">
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span class="deck-badge">SIH1711</span>
+      <span class="deck-title">Rail Madad: HCAM-URPA Architecture</span>
+    </div>
+    <div class="slide-counter" id="slideCounter">Slide 1 of 7</div>
+  </div>
+
+  <!-- Slides Viewport -->
+  <div class="slides-container">
+
+    <!-- SLIDE 1: Title & Team Details -->
+    <section class="slide active" id="slide-1" data-notes="Good morning/afternoon respected professor. I am Denny Mathew (URK24CS1023) presenting alongside Vamshi Krishna (URK24CS1025). Our project tackles SIH1711: AI-Powered Grievance Routing and Dynamic Prioritisation for Indian Railways (Rail Madad). We have built a novel multi-view hybrid architecture, HCAM-URPA, strictly using classical Data Science techniques from Modules 2 through 6 of our 23CS2024 syllabus—without black-box neural networks.">
+      <div class="hero-container">
+        <span class="badge-pill pill-blue" style="font-size: 12px; padding: 6px 14px;">Smart India Hackathon (SIH1711) &bull; Ministry of Railways</span>
+        <h1 class="hero-title">AI-Powered Grievance Routing & Dynamic Prioritisation for Rail Madad</h1>
+        <p class="hero-subtitle">A Novel Multi-View Hybrid Architecture (HCAM-URPA) Using Classical Data Science</p>
+
+        <div class="students-badge-card">
+          <div class="student-entry">
+            <div class="student-name">Denny Mathew</div>
+            <div class="student-reg">Reg No: URK24CS1023</div>
+            <div class="student-dept">Dept. of Computer Science & Engineering</div>
+          </div>
+          <div style="width: 1px; background: rgba(255, 255, 255, 0.1);"></div>
+          <div class="student-entry">
+            <div class="student-name">Vamshi Krishna</div>
+            <div class="student-reg">Reg No: URK24CS1025</div>
+            <div class="student-dept">Dept. of Computer Science & Engineering</div>
+          </div>
+        </div>
+
+        <div class="hero-meta-row">
+          <div class="meta-tag">
+            <span style="color: var(--accent-emerald);">●</span>
+            <strong>Institution:</strong> Karunya Institute of Technology and Sciences
+          </div>
+          <div class="meta-tag">
+            <span style="color: var(--accent-indigo);">●</span>
+            <strong>Course:</strong> Data Science Ecosystem (23CS2024)
+          </div>
+          <div class="meta-tag">
+            <span style="color: var(--accent-purple);">●</span>
+            <strong>Scope:</strong> Modules 2 to 6 (Strictly Syllabus Only)
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: Problem Statement & Real-World Challenges -->
+    <section class="slide" id="slide-2" data-notes="Slide 2 presents the 4 core data science bottlenecks in Rail Madad. First, multi-modality: complaints have text, telemetry, and optional photos. Second, the missing modality problem: 35.5% of complaints lack photos. Third, class imbalance: Mechanical and Electrical dominate, while Security is only 10%. Fourth, the Severity vs Urgency gap: physical damage is static, but urgency is dynamic depending on how close the train is to a maintenance yard.">
+      <div class="slide-header">
+        <div class="slide-tag"><span>●</span> Module 2 & 3: Problem Identification & Domain Wrangling</div>
+        <h2 class="slide-title">Rail Madad Operations: Four Practical Data Science Bottlenecks</h2>
+        <p class="slide-subtitle">Why standard off-the-shelf single-model classifiers fail under production railway constraints</p>
+      </div>
+      <div class="grid-4">
+        <div class="card">
+          <div class="card-title">
+            <span class="badge-pill pill-blue">1</span> Multi-Modal Data
+          </div>
+          <div class="card-body">
+            Grievances contain heterogeneous, unsynchronized data:
+            <ul>
+              <li>Unstructured passenger text (varying quality and slang).</li>
+              <li>Operational train telemetry (speed, yard distance, wait hours).</li>
+              <li>Optional attached photos (camera features).</li>
+            </ul>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value">3 Types</div>
+            <div class="metric-label">Heterogeneous Inputs</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span class="badge-pill pill-rose">2</span> Missing Modality
+          </div>
+          <div class="card-body">
+            In our simulation and real-world surveys:
+            <ul>
+              <li><strong>35.5% of complaints have no photo</strong> attached.</li>
+              <li>Naive models crash or feed misleading zero-vectors.</li>
+              <li>System must gracefully operate with or without photos.</li>
+            </ul>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value">35.5%</div>
+            <div class="metric-label">Photo Absent Rate</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span class="badge-pill pill-amber">3</span> Class Imbalance
+          </div>
+          <div class="card-body">
+            Severe natural operational skew across 5 departments:
+            <ul>
+              <li>Mechanical (~33%) &amp; Electrical (~24%) dominate.</li>
+              <li>Critical safety alarms (Security ~10%) are minority classes.</li>
+              <li>Requires balanced class weighting and macro-F1 metrics.</li>
+            </ul>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value">3.3 : 1</div>
+            <div class="metric-label">Imbalance Ratio</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span class="badge-pill pill-green">4</span> Severity &ne; Urgency
+          </div>
+          <div class="card-body">
+            Physical damage is static, but response urgency is dynamic:
+            <ul>
+              <li>A broken mirror is high severity, but low immediate operational urgency.</li>
+              <li>A minor door latch issue becomes an emergency as train approaches a yard ($D \to 0$).</li>
+            </ul>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value">U &ge; s</div>
+            <div class="metric-label">Physical Invariant</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: The Novel Algorithm: HCAM-URPA -->
+    <section class="slide" id="slide-3" data-notes="Slide 3 introduces our novel algorithm: HCAM-URPA. HCAM uses three independent views: Text (LogReg), Context (Decision Tree), and Retrieval (KNN Recommender). Instead of fixed equal weights, we introduce Confidence-Adaptive Fusion using Shannon entropy. When text is vague, entropy spikes and its weight automatically collapses. URPA predicts urgency using a physics-inspired differential equation fitted via curve_fit, mathematically guaranteeing Urgency is always greater than or equal to Severity.">
+      <div class="slide-header">
+        <div class="slide-tag"><span>●</span> Novel Algorithm Formulation: Modules 4 & 5</div>
+        <h2 class="slide-title">The Proposed Solution: HCAM-URPA Architecture</h2>
+        <p class="slide-subtitle">Hybrid Confidence-Adaptive Multi-View Routing + Urgency Propagation Algorithm</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title" style="color: var(--accent-blue);">
+            <span>🔷</span> Pillar 1: HCAM (Multi-View Routing)
+          </div>
+          <div class="card-body">
+            <p>Combines 3 complementary, syllabus-compliant views:</p>
+            <ul>
+              <li><strong>Text View ($p_T$):</strong> TF-IDF bi-grams + Multinomial Logistic Regression.</li>
+              <li><strong>Context View ($p_C$):</strong> Telemetry + 8 photo features via CART Decision Tree.</li>
+              <li><strong>Retrieval View ($p_R$):</strong> Cosine-similarity KNN Recommender (Module 5).</li>
+            </ul>
+            <div class="formula-block">
+              c_v = 1 - H(p_v) / ln(K)   [Shannon Confidence]<br>
+              w_v = (&alpha;_v &middot; c_v) / &sum; (&alpha;_u &middot; c_u) [Dynamic Weights]<br>
+              p_final = &sum; w_v &middot; p_v
+            </div>
+            <p style="font-size: 13px; color: var(--accent-emerald);">
+              &bull; <strong>Photo-Aware Reliability (&alpha;_v):</strong> Computed separately for photo-present (&alpha;_C = 0.959) vs photo-absent (&alpha;_C = 0.052), naturally collapsing Context View when photos are missing.
+            </p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="color: var(--accent-purple);">
+            <span>⚡</span> Pillar 2: URPA (Urgency Propagation)
+          </div>
+          <div class="card-body">
+            <p>Decouples static physical severity from dynamic dispatch urgency:</p>
+            <ul>
+              <li><strong>Step 1:</strong> Multiple Linear Regression predicts base structural damage score $s \in [0, 1]$.</li>
+              <li><strong>Step 2:</strong> Nonlinear hazard differential equation fitted via <code>scipy.optimize.curve_fit</code>:</li>
+            </ul>
+            <div class="formula-block">
+              hazard = &amacr; &middot; exp(-D / &tau;) + b &middot; w<br>
+              U = s + (1 - s) &middot; (1 - exp(-hazard))
+            </div>
+            <p style="font-size: 13px;">
+              &bull; <strong>Guaranteed Physical Invariant:</strong> Because $hazard \ge 0$, $(1 - e^{-hazard}) \ge 0$, mathematically proving <strong>$U \ge s$</strong> at all times! Linear regression violates this rule.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: Statistical Hypothesis Testing -->
+    <section class="slide" id="slide-4" data-notes="Slide 4 covers formal statistical hypothesis testing from Module 3. We executed 4 formal tests: One-way ANOVA rejected H0 with F=926.83, proving distinct severity distributions across departments. Two-sample t-test had p=0.3385, showing photo attachment does not bias operational urgency. Chi-Square test confirmed complaint categories are independent of railway stations. Finally, the 95% confidence interval for average urgency is 0.6766 to 0.6869.">
+      <div class="slide-header">
+        <div class="slide-tag"><span>●</span> Module 3: Statistical Inference & Hypothesis Testing</div>
+        <h2 class="slide-title">Grounding the Problem with Formal Statistical Testing</h2>
+        <p class="slide-subtitle">Validating population hypotheses and operational invariants prior to modeling</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">
+            <span class="badge-pill pill-blue">Test 1</span> One-Way ANOVA: Severity across Departments
+          </div>
+          <div class="card-body">
+            <p><strong>$H_0$:</strong> Mean physical severity is identical across all 5 railway departments.</p>
+            <p><strong>$H_1$:</strong> At least one department has significantly different damage severity.</p>
+            <div class="metric-box">
+              <div class="metric-value">F = 926.83, p = 0.0000</div>
+              <div class="metric-label">Decision: Reject H0 (p &lt; 0.05)</div>
+            </div>
+            <p style="margin-top: 10px; font-size: 13px;">
+              <strong>Plain-English Conclusion:</strong> Confirms Mechanical (0.75) and Security (0.83) carry fundamentally higher structural severity than Cleaning (0.35).
+            </p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span class="badge-pill pill-purple">Test 2</span> Two-Sample t-Test: Urgency vs Photo Presence
+          </div>
+          <div class="card-body">
+            <p><strong>$H_0$:</strong> Mean urgency is identical whether a photo is attached or not.</p>
+            <p><strong>$H_1$:</strong> Uploading a photo significantly alters operational urgency.</p>
+            <div class="metric-box">
+              <div class="metric-value">t = 0.957, p = 0.3385</div>
+              <div class="metric-label">Decision: Fail to Reject H0 (p &ge; 0.05)</div>
+            </div>
+            <p style="margin-top: 10px; font-size: 13px;">
+              <strong>Plain-English Conclusion:</strong> Proves operational urgency is driven by yard proximity and passenger wait time, NOT simply whether a photo was uploaded.
+            </p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span class="badge-pill pill-green">Test 3</span> Chi-Square Test: Department vs Station Code
+          </div>
+          <div class="card-body">
+            <p><strong>$H_0$:</strong> Grievance department type is independent of station code.</p>
+            <div class="metric-box">
+              <div class="metric-value">&chi;&sup2; = 59.88, p = 0.4433</div>
+              <div class="metric-label">Decision: Fail to Reject H0 (p &ge; 0.05)</div>
+            </div>
+            <p style="margin-top: 10px; font-size: 13px;">
+              <strong>Conclusion:</strong> Complaint distribution is uniform across Indian stations; no station has an artificial bias toward a single department.
+            </p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span class="badge-pill pill-amber">Test 4</span> 95% Confidence Interval for Urgency
+          </div>
+          <div class="card-body">
+            <p>Computing margin of error using Student's t-distribution:</p>
+            <div class="metric-box">
+              <div class="metric-value">[0.6766 , 0.6869]</div>
+              <div class="metric-label">95% Confidence Interval for Mean Urgency</div>
+            </div>
+            <p style="margin-top: 10px; font-size: 13px;">
+              <strong>Interpretation:</strong> We are 95% confident that the true population mean urgency for Indian Railways lies between 0.677 and 0.687.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: Empirical Results & Ablation Analysis -->
+    <section class="slide" id="slide-5" data-notes="Slide 5 is the empirical heart of our presentation. On the held-out test set of 525 complaints, our baseline LogReg achieved 77.90% accuracy, but collapsed to 17.14% when complaints had vague text. Full HCAM achieved 94.67% overall accuracy and 80.71% on ambiguous complaints! A 5-fold paired t-test confirmed this improvement is statistically significant with p=0.00004. Our retrieval view recommender achieved 94.1% Hit-Rate@3.">
+      <div class="slide-header">
+        <div class="slide-tag"><span>●</span> Modules 4 & 5: Model Evaluation & Ablation Study</div>
+        <h2 class="slide-title">Empirical Results: Full Test Set & Stress Scenarios</h2>
+        <p class="slide-subtitle">Strict evaluation on held-out test split (N = 525) with zero data leakage</p>
+      </div>
+      <div class="card" style="margin-bottom: 20px;">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Model Configuration</th>
+              <th>Overall Accuracy</th>
+              <th>Macro-F1</th>
+              <th>Ambiguous Text Acc.</th>
+              <th>Missing Photo Acc.</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Text Only (TF-IDF + LogReg)</strong></td>
+              <td>77.90%</td>
+              <td>0.7698</td>
+              <td style="color: var(--accent-rose); font-weight: 700;">17.14% (Fails!)</td>
+              <td>77.22%</td>
+            </tr>
+            <tr>
+              <td><strong>2. Text + Context (Equal Wt)</strong></td>
+              <td>92.19%</td>
+              <td>0.9039</td>
+              <td>77.14%</td>
+              <td>84.44%</td>
+            </tr>
+            <tr>
+              <td><strong>3. Text + Context + Retrieval (Fixed Wt)</strong></td>
+              <td>94.29%</td>
+              <td>0.9317</td>
+              <td>79.29%</td>
+              <td>85.00%</td>
+            </tr>
+            <tr class="highlight-row">
+              <td><strong>4. Full HCAM (Adaptive Entropy Wt)</strong></td>
+              <td style="color: var(--accent-blue); font-weight: 800;">94.67%</td>
+              <td style="color: var(--accent-blue); font-weight: 800;">0.9376</td>
+              <td style="color: var(--accent-emerald); font-weight: 800;">80.71% (+63.6%)</td>
+              <td style="color: var(--accent-emerald); font-weight: 800;">85.55%</td>
+            </tr>
+            <tr>
+              <td><strong>5. Hierarchical Routing Ablation</strong></td>
+              <td>76.57%</td>
+              <td>0.7512</td>
+              <td>62.14%</td>
+              <td>72.22%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">Paired t-Test (Statistical Significance)</div>
+          <div class="card-body">
+            Comparing 5-fold CV of HCAM (91.17%) vs LogReg (79.49%):
+            <div class="metric-box">
+              <div class="metric-value">t = 19.05, p &lt; 0.001</div>
+              <div class="metric-label">Significant Improvement</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Recommender Evaluation (Module 5)</div>
+          <div class="card-body">
+            Cosine Nearest Neighbor Retrieval View:
+            <div class="metric-box">
+              <div class="metric-value">84.89% / 94.10%</div>
+              <div class="metric-label">Precision@3 / Hit-Rate@3</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Ambiguous Stress Recovery</div>
+          <div class="card-body">
+            On vague text (*"problem in coach B2"*):
+            <div class="metric-box">
+              <div class="metric-value">17.1% &rarr; 80.7%</div>
+              <div class="metric-label">Multi-View Recovery Gain</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: URPA Urgency & Station Queue -->
+    <section class="slide" id="slide-6" data-notes="Slide 6 demonstrates the Urgency Propagation Algorithm. Multiple Linear Regression achieved an MAE of 0.0812, but it predicted Urgency lower than Severity on several test cases, which violates physical reality. URPA achieves an MAE of 0.0862 while guaranteeing U >= s. It recovered the yard proximity decay at 85.8 km and wait time hazard at 0.0669 with only 16% error. We then rank complaints into an actionable top-10 priority queue for station dispatchers.">
+      <div class="slide-header">
+        <div class="slide-tag"><span>●</span> Module 4: Regression & Physical Invariant Modeling</div>
+        <h2 class="slide-title">URPA Urgency Prediction & Live Station Priority Queue</h2>
+        <p class="slide-subtitle">Guaranteeing operational monotonicity ($U \ge s$) and recovering physical hazard parameters</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Urgency Regression Benchmark</div>
+          <div class="card-body">
+            <table class="styled-table">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>MAE</th>
+                  <th>RMSE</th>
+                  <th>U &ge; s Guaranteed?</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Multiple Linear Regression</td>
+                  <td><strong>0.0812</strong></td>
+                  <td>0.1030</td>
+                  <td style="color: var(--accent-rose); font-weight: 700;">NO (Violates physics)</td>
+                </tr>
+                <tr>
+                  <td>Polynomial Regression (Deg 2)</td>
+                  <td>0.0968</td>
+                  <td>0.1257</td>
+                  <td style="color: var(--accent-rose); font-weight: 700;">NO (Violates physics)</td>
+                </tr>
+                <tr class="highlight-row">
+                  <td><strong>URPA (Nonlinear Curve Fit)</strong></td>
+                  <td>0.0862</td>
+                  <td>0.1104</td>
+                  <td style="color: var(--accent-emerald); font-weight: 700;">YES (Guaranteed)</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="margin-top: 16px;">
+              <p><strong>Physical Parameter Recovery:</strong></p>
+              <ul>
+                <li>Yard Proximity Decay ($\tau$): True = $60\text{ km} \to$ Fitted = <strong>$85.80\text{ km}$</strong>.</li>
+                <li>Wait-Time Hazard Rate ($b$): True = $0.080\text{ hr}^{-1} \to$ Fitted = <strong>$0.0669\text{ hr}^{-1}$</strong> (only 16.3% error).</li>
+                <li>Department Hazard: Security learned <strong>1.813</strong> and Mechanical learned <strong>0.952</strong>.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Top Station Priority Queue Preview</div>
+          <div class="card-body">
+            <p>Actionable dynamic queue ranking tickets by predicted urgency $U$:</p>
+            <table class="styled-table" style="font-size: 11px;">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Dept</th>
+                  <th>Yard Dist</th>
+                  <th>Wait</th>
+                  <th>Severity (s)</th>
+                  <th>Urgency (U)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="highlight-row">
+                  <td>#1</td>
+                  <td>Security</td>
+                  <td>3.4 km</td>
+                  <td>3.8 hrs</td>
+                  <td>0.89</td>
+                  <td style="color: var(--accent-rose); font-weight: 800;">0.982</td>
+                </tr>
+                <tr>
+                  <td>#2</td>
+                  <td>Mechanical</td>
+                  <td>8.1 km</td>
+                  <td>4.2 hrs</td>
+                  <td>0.84</td>
+                  <td style="color: var(--accent-rose); font-weight: 800;">0.961</td>
+                </tr>
+                <tr>
+                  <td>#3</td>
+                  <td>Electrical</td>
+                  <td>12.5 km</td>
+                  <td>3.5 hrs</td>
+                  <td>0.78</td>
+                  <td style="color: var(--accent-amber); font-weight: 800;">0.924</td>
+                </tr>
+                <tr>
+                  <td>#4</td>
+                  <td>Cleaning</td>
+                  <td>4.2 km</td>
+                  <td>5.1 hrs</td>
+                  <td>0.48</td>
+                  <td style="color: var(--accent-amber); font-weight: 800;">0.865</td>
+                </tr>
+                <tr>
+                  <td>#5</td>
+                  <td>Catering</td>
+                  <td>19.8 km</td>
+                  <td>2.1 hrs</td>
+                  <td>0.52</td>
+                  <td>0.741</td>
+                </tr>
+              </tbody>
+            </table>
+            <p style="margin-top: 10px; font-size: 12px; color: var(--accent-blue);">
+              &bull; High wait time pushes lower-severity complaints up the priority queue before passengers disembark.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: Ethics, Explainability, Latency & Limitations -->
+    <section class="slide" id="slide-7" data-notes="Finally, Slide 7 addresses Module 6: Ethics, Explainability, and Accountability. We anonymized data by dropping PNRs, masking phone numbers, and hashing passenger names with salted SHA-256. A station fairness audit showed minimal disparity between 88.6% and 100%. Our system is fully explainable via Logistic Regression keyword weights and Decision Tree importances. It processes a complaint in just 0.018 milliseconds on CPU, making it suitable for edge deployment in station master offices. Thank you, and we welcome your questions!">
+      <div class="slide-header">
+        <div class="slide-tag"><span>●</span> Module 6: Ethics, Explainability, Latency & Governance</div>
+        <h2 class="slide-title">Ethics, Transparency, Edge Latency & Limitations</h2>
+        <p class="slide-subtitle">Responsible AI deployment for public railway infrastructure</p>
+      </div>
+      <div class="grid-4">
+        <div class="card">
+          <div class="card-title">
+            <span class="badge-pill pill-blue">1</span> PII Anonymisation
+          </div>
+          <div class="card-body">
+            <ul>
+              <li><strong>PNR Numbers:</strong> Completely dropped from operational models.</li>
+              <li><strong>Phone Numbers:</strong> Redacted to <code>+91 98765 *****</code>.</li>
+              <li><strong>Passenger Names:</strong> Cryptographically hashed with salted SHA-256.</li>
+            </ul>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value">100%</div>
+            <div class="metric-label">PII Protected</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span class="badge-pill pill-green">2</span> Fairness Audit
+          </div>
+          <div class="card-body">
+            Audited across 15 Indian railway stations (NDLS, CSMT, HWH, MAS, etc.):
+            <ul>
+              <li>Accuracy range: <strong>88.6% to 100.0%</strong>.</li>
+              <li>Disparity gap: <strong>11.36%</strong>.</li>
+              <li>No systemic bias against tier-2 stations (GKP, PNBE).</li>
+            </ul>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value">11.36%</div>
+            <div class="metric-label">Max Disparity Gap</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span class="badge-pill pill-purple">3</span> Explainability
+          </div>
+          <div class="card-body">
+            <ul>
+              <li><strong>Text:</strong> Top LogReg keyword coefficients (*washbasin* &rarr; Cleaning).</li>
+              <li><strong>Context:</strong> DT feature importance (dirt 28.4%, crowd 24.8%, rust 23.2%).</li>
+              <li><strong>Instance Breakdown:</strong> Per-complaint view weights ($w_T, w_C, w_R$) visible.</li>
+            </ul>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value">Glass-Box</div>
+            <div class="metric-label">Full Transparency</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span class="badge-pill pill-amber">4</span> Edge Latency
+          </div>
+          <div class="card-body">
+            Benchmark on standard CPU hardware:
+            <ul>
+              <li>Single complaint latency: <strong>0.018 ms</strong>.</li>
+              <li>Throughput: <strong>&gt;55,000 complaints / sec</strong>.</li>
+              <li>Runs smoothly on a $35 Raspberry Pi in any station master's office.</li>
+            </ul>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value">0.018 ms</div>
+            <div class="metric-label">CPU Inference Latency</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Bottom Control Bar -->
+  <div class="bottom-bar">
+    <div style="display: flex; gap: 10px;">
+      <button class="nav-btn" id="prevBtn" onclick="prevSlide()" disabled>&larr; Previous</button>
+      <button class="nav-btn" id="nextBtn" onclick="nextSlide()">Next &rarr;</button>
+    </div>
+
+    <div class="slide-dots" id="slideDots"></div>
+
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <button class="speaker-notes-toggle" id="notesToggleBtn" onclick="toggleNotes()">
+        <span>📝</span> Speaker Notes (N)
+      </button>
+      <span style="font-size: 11px; color: var(--text-muted);">Use &larr; &rarr; or Space</span>
+    </div>
+  </div>
+
+  <!-- Speaker Notes Panel -->
+  <div class="speaker-notes-panel" id="speakerNotesPanel">
+    <div class="notes-title">Speaker Script &bull; Slide <span id="notesSlideNum">1</span></div>
+    <div id="notesContent">Loading notes...</div>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 7;
+
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('progressBar');
+    const slideCounter = document.getElementById('slideCounter');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const slideDots = document.getElementById('slideDots');
+    const notesPanel = document.getElementById('speakerNotesPanel');
+    const notesContent = document.getElementById('notesContent');
+    const notesSlideNum = document.getElementById('notesSlideNum');
+
+    // Build dots
+    for (let i = 1; i <= totalSlides; i++) {
+      const dot = document.createElement('div');
+      dot.className = `dot ${i === 1 ? 'active' : ''}`;
+      dot.onclick = () => goToSlide(i);
+      slideDots.appendChild(dot);
+    }
+
+    function updateSlide() {
+      slides.forEach((s, idx) => {
+        s.classList.toggle('active', idx + 1 === currentSlide);
+      });
+
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach((d, idx) => {
+        d.classList.toggle('active', idx + 1 === currentSlide);
+      });
+
+      progressBar.style.width = `${(currentSlide / totalSlides) * 100}%`;
+      slideCounter.innerText = `Slide ${currentSlide} of ${totalSlides}`;
+      prevBtn.disabled = currentSlide === 1;
+      nextBtn.disabled = currentSlide === totalSlides;
+
+      // Update speaker notes
+      const activeSlideEl = document.getElementById(`slide-${currentSlide}`);
+      const notes = activeSlideEl ? activeSlideEl.getAttribute('data-notes') : '';
+      notesContent.innerText = notes || 'No notes for this slide.';
+      notesSlideNum.innerText = currentSlide;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function goToSlide(n) {
+      if (n >= 1 && n <= totalSlides) {
+        currentSlide = n;
+        updateSlide();
+      }
+    }
+
+    function toggleNotes() {
+      notesPanel.classList.toggle('visible');
+    }
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'n' || e.key === 'N') {
+        toggleNotes();
+      } else if (e.key === 'f' || e.key === 'F') {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+    });
+
+    // Initialize
+    updateSlide();
+  </script>
+</body>
+</html>
